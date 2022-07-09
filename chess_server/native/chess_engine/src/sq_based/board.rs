@@ -1,58 +1,6 @@
-pub struct Location {
-    pub r: usize,
-    pub c: usize
-}
-
-#[derive(Clone, Copy)]
-enum PieceType {
-    Pawn,
-    Knight,
-    Bishop,
-    Rook,
-    Queen,
-    King
-}
-
-#[derive(PartialEq, Clone, Copy)]
-enum Side {
-    White,
-    Black
-}
-
-#[derive(Clone, Copy)]
-struct Piece {
-    type_: PieceType,
-    side: Side,
-}
-
-impl Piece {
-    fn value(&self) -> char {
-        let ch = match self.type_ {
-            PieceType::Pawn => 'p',
-            PieceType::Knight => 'n',
-            PieceType::Bishop => 'b',
-            PieceType::Rook => 'r',
-            PieceType::Queen => 'q',
-            PieceType::King => 'k',
-        };
-        return match self.side {
-            Side::White => ch.to_ascii_uppercase(),
-            Side::Black => ch,
-        }
-    }
-}
-
-#[derive(Clone, Copy)]
-pub struct Square(Option<Piece>);
-
-impl Square {
-    fn value(&self) -> char {
-        match &self.0 {
-            Some(p) => p.value(),
-            None => 'x'
-        }
-    }
-}
+pub mod square;
+use square::{Location, Piece, PieceType, Side, Square};
+use rustler::{Encoder, Env, Term};
 
 pub struct Board([[Square; 8]; 8]);
 
@@ -97,3 +45,10 @@ impl Board {
     }
 }
 
+impl Encoder for Board {
+    fn encode<'a>(&self, env: Env<'a>) -> Term<'a> {
+        for row in self.0 {
+            row.encode(env)
+        }
+    }
+}
