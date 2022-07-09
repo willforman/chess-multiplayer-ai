@@ -14,10 +14,12 @@ defmodule ChessServer.Runtime.Server do
 
   # Server
 
-  def init(player_pair) do
-    { :ok, Game.new_game(player_pair) }
+  @impl true
+  def init(_args) do
+    { :ok, Game.new_game() }
   end
     
+  @impl true
   def handle_call({ :make_move, loc_pair }, _from, game) do
     game = Game.make_move(game, loc_pair)
     { :reply, game, game }

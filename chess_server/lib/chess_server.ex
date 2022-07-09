@@ -4,9 +4,9 @@ defmodule ChessServer do
 
   @opaque game_pid :: Server.t
 
-  @spec new_game(Game.player_pair) :: game_pid
-  def new_game(player_pair) do
-    { :ok, pid} = ChessServer.Runtime.Application.start_game(player_pair)
+  @spec new_game() :: game_pid
+  def new_game() do
+    { :ok, pid } = ChessServer.Runtime.Application.start_game()
     pid
   end
 

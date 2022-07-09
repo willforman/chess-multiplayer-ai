@@ -12,8 +12,8 @@ defmodule ChessServer.Runtime.Application do
     Supervisor.start_link(supervisor_spec, strategy: :one_for_one)
   end
 
-  def start_game(player_pair) do
-    DynamicSupervisor.start_child(@super_name, { ChessServer.Runtime.Server, player_pair })
+  def start_game() do
+    DynamicSupervisor.start_child(@super_name, { ChessServer.Runtime.Server, nil })
   end
   
 end
