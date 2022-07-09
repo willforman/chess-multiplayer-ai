@@ -15,7 +15,7 @@ config :chess, ChessWeb.Endpoint,
   url: [host: "localhost"],
   render_errors: [view: ChessWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Chess.PubSub,
-  live_view: [signing_salt: "vJUITDYu"]
+  live_view: [signing_salt: "GSG1oOlo"]
 
 # Configures the mailer
 #

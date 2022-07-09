@@ -20,7 +20,7 @@ config :chess, Chess.Repo,
 # you can enable the server option below.
 config :chess, ChessWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "H0OOCQRC4eyFhRmd8CsmWwlqep8os42X3GA6zhQTviDS7npT2H2DbZyUx/4EcYKl",
+  secret_key_base: "qV+IqNplBCJjgRWgXZTDVeel0vvqJStYqY9YnjXkd9JDGVE80nHpJoXzGjT3yeGB",
   server: false
 
 # In test we don't send emails.

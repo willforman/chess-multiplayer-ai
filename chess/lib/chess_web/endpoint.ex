@@ -7,7 +7,7 @@ defmodule ChessWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_chess_key",
-    signing_salt: "o37BdELz"
+    signing_salt: "n/IEzhHV"
   ]
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
@@ -30,6 +30,10 @@ defmodule ChessWeb.Endpoint do
     plug Phoenix.CodeReloader
     plug Phoenix.Ecto.CheckRepoStatus, otp_app: :chess
   end
+
+  plug Phoenix.LiveDashboard.RequestLogger,
+    param_key: "request_logger",
+    cookie_key: "request_logger"
 
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
