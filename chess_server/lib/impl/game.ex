@@ -19,13 +19,11 @@ defmodule ChessServer.Impl.Game do
   end
 
   @spec make_move(t, loc_pair) :: t
-  def make_move(game = %{ side_to_move: side_to_move }, loc_pair) when side_to_move == :white do
-    inspect(loc_pair)
+  def make_move(game = %{ side_to_move: side_to_move }, _loc_pair) when side_to_move == :white do
     %{game | side_to_move: :black }
   end
 
-  def make_move(game, loc_pair) do
-    inspect(loc_pair)
+  def make_move(game, _loc_pair) do
     %{game | side_to_move: :white }
   end
   
