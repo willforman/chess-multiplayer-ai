@@ -1,7 +1,11 @@
 pub mod square;
-use square::{Location, Piece, PieceType, Side, Square};
-use rustler::{Encoder, Env, Term};
+pub mod error;
 
+use error::MovePieceError;
+use square::{Location, Piece, PieceType, Side, Square};
+use rustler::{ Decoder, Encoder, Env, Term, NifResult, ListIterator };
+
+#[derive(Clone, Copy)]
 pub struct Board([Square; 64]);
 
 impl std::ops::Index<usize> for Board {
@@ -21,27 +25,49 @@ impl std::ops::IndexMut<usize> for Board {
 }
 
 impl Board {
-    pub fn make_move(&mut self, src: Location, dst: Location) -> bool {
-        return match &self[src.r][src.c].0 {
-            None => false,
-            Some(src_piece) => match &self[src.r][src.c].0 {
-                None => false,
-                Some(dst_piece) => {
-                    if src_piece.side == dst_piece.side {
-                        return false;
+    pub fn get_square(&self, loc: Location) -> Square {
+        self[loc.r][loc.c]
+    }
+
+    pub fn make_move(&mut self, src: Location, dst: Location) -> Result<(), MovePieceError> {
+        return match self[src.r][src.c].0 {
+            None => Err(MovePieceError::NoSrcPiece(src)),
+            Some(src_piece) => {
+                match self[dst.r][dst.c].0 {
+                    Some(dst_piece) => {
+                        if dst_piece.side == src_piece.side {
+                            Err(MovePieceError::SrcDstPiecesSideSame(src, dst))
+                        } else {
+                            self[dst.r][dst.c] = self[src.r][src.c];
+                            self[src.r][src.c] = Square(None);
+                            Ok(())
+                        }
                     }
-                    self[dst.r][dst.c] = self[src.r][src.c];
-                    self[src.r][src.c] = Square(None);
-                    return true;
+                    None => {
+                        self[dst.r][dst.c] = self[src.r][src.c];
+                        self[src.r][src.c] = Square(None);
+                        Ok(())
+                    }
                 }
             }
+            // Some(src_piece) => match &self[src.r][src.c].0 {
+            //     None => Err(()),
+            //     Some(dst_piece) => {
+            //         if src_piece.side == dst_piece.side {
+            //             return Err(());
+            //         }
+            //         self[dst.r][dst.c] = self[src.r][src.c];
+            //         self[src.r][src.c] = Square(None);
+            //         Ok(())
+            //     }
+            // }
         }
     }
 
     pub fn print(&self) {
         for r in 0..8 {
             for c in 0..8 {
-                print!("{}", self[r][c].value());
+                print!("{}", self[r][c].char_value());
             }
             println!("");
         }
@@ -67,3 +93,13 @@ impl Encoder for Board {
     }
 }
 
+impl<'a> Decoder<'a> for Board {
+    fn decode(term: Term<'a>) -> NifResult<Self> {
+        let mut arr: [Square; 64] = [Square(None); 64];
+        let iter = term.decode::<ListIterator>()?;
+        for (idx, item) in iter.enumerate() {
+            arr[idx] = item.decode::<Square>()?;
+        }
+        Ok(Board(arr))
+    }
+}
